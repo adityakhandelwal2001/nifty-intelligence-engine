@@ -1,13 +1,16 @@
 import os
 import time
-
 from dhanhq import DhanContext, dhanhq
 
 
-print("======================================")
-print(" NIFTY INTELLIGENCE ENGINE v0.1")
-print(" DHAN CONNECTION TEST")
-print("======================================")
+def log(message=""):
+    print(message, flush=True)
+
+
+log("======================================")
+log(" NIFTY INTELLIGENCE ENGINE v0.1")
+log(" DHAN CONNECTION TEST")
+log("======================================")
 
 
 client_id = os.getenv("DHAN_CLIENT_ID")
@@ -21,58 +24,73 @@ if not access_token:
     raise RuntimeError("DHAN_ACCESS_TOKEN is missing.")
 
 
-print("Credentials found.")
-print("Client ID:", client_id[:4] + "****")
+log("Credentials found.")
+log(f"Client ID: {client_id[:4]}****")
+log("")
 
 
-# Current DhanHQ SDK authentication
+log("Creating DhanContext...")
+
 dhan_context = DhanContext(
     client_id,
     access_token
 )
 
+log("DhanContext created.")
+
 dhan = dhanhq(dhan_context)
 
+log("DhanHQ client initialized.")
+log("")
 
-print("DhanHQ client initialized.")
-print("Testing read-only connection...")
-print("")
+
+log("Calling Dhan Positions API...")
+log("This is READ-ONLY.")
+log("")
 
 
 try:
 
     response = dhan.get_positions()
 
-    print("======================================")
-    print(" DHAN CONNECTION SUCCESS")
-    print("======================================")
+    log("======================================")
+    log(" DHAN API RESPONSE RECEIVED")
+    log("======================================")
 
-    print("Dhan API responded successfully.")
-    print("API status:", response.get("status"))
+    log(f"Response type: {type(response).__name__}")
 
-    print("")
-    print("READ-ONLY TEST")
-    print("No orders were placed.")
-    print("No positions were modified.")
+    if isinstance(response, dict):
+        log(f"API status: {response.get('status')}")
+        log(f"Error type: {response.get('errorType')}")
+        log(f"Error code: {response.get('errorCode')}")
+        log(f"Error message: {response.get('errorMessage')}")
+
+    log("")
+    log("======================================")
+    log(" DHAN CONNECTION TEST COMPLETE")
+    log("======================================")
+    log("No orders were placed.")
+    log("No positions were modified.")
+    log("")
 
 
 except Exception as error:
 
-    print("======================================")
-    print(" DHAN CONNECTION FAILED")
-    print("======================================")
+    log("======================================")
+    log(" DHAN API CALL FAILED")
+    log("======================================")
 
-    print("Error type:", type(error).__name__)
-    print("Error:", error)
+    log(f"Error type: {type(error).__name__}")
+    log(f"Error: {error}")
 
     raise
 
 
 while True:
 
-    print(
-        "Engine alive:",
-        time.strftime("%Y-%m-%d %H:%M:%S")
+    log(
+        "Engine alive: "
+        + time.strftime("%Y-%m-%d %H:%M:%S")
     )
 
     time.sleep(60)
